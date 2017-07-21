@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -21,7 +22,11 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     DbHelper dbHelper;
+
+    // An adapter is something that knows about the list items and how to represent or draw each
+    // list item on the screen.
     ArrayAdapter<String> mAdapter;
+
     ListView lstTask;
 
     @Override
@@ -31,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         dbHelper = new DbHelper(this);
 
+        // activity_main.xml
         lstTask = (ListView)findViewById(R.id.lstTask);
 
         loadTaskList();
@@ -39,12 +45,28 @@ public class MainActivity extends AppCompatActivity {
     private void loadTaskList() {
         ArrayList<String> taskList = dbHelper.getTaskList();
         if(mAdapter==null){
+            // makes use of ArrayAdapter and its constructor takes 3 parameters having information about
+            // the list items
+            // First argument is Context to access system services and resources ( you need layout inflater
+            // to create list item view )
+
+            // Second argument defines the layout of the list that defines how the list item appears in
+            // listview. Here layout android.R.layout.simple_list_item_1 which is defined by framework is used.
+
+            // Third argument is the information about the list item, typically this information is used
+            // to create view for the list item.
             mAdapter = new ArrayAdapter<String>(this,R.layout.row,R.id.task_title,taskList);
+            // Adapter is given to the ListView
+            // ListView calls the functions of Adapter to get the view of list item and populates
+            // in the container.
             lstTask.setAdapter(mAdapter);
         }
         else{
+            // Clear listview contents.
             mAdapter.clear();
             mAdapter.addAll(taskList);
+            // If the list items are changed ( here todo list ) Adapter can let the ListView know about
+            // it by calling notifyDataSetChanged.
             mAdapter.notifyDataSetChanged();
         }
     }
